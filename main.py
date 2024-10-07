@@ -56,5 +56,5 @@ normal_contacts = [group_name(i) for i in [create_contact(contact) for contact i
 result = del_duplicate(normal_contacts)
 
 with open("phonebook.csv", "w", encoding="utf-8") as f:
-    datawriter = csv.writer(f, delimiter=',')
+    datawriter = csv.writer(f, delimiter=',', lineterminator="\r")
     datawriter.writerows(result)
