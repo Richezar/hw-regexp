@@ -5,23 +5,9 @@ with open("phonebook_raw.csv", encoding="utf-8") as f:
     contacts_list = list(rows)
 
 def group_name(contacts):
-    result_list = contacts
-    for idx, text in enumerate(contacts):
-        if idx == 0:
-            continue
-        fio = text[0].split()
-        if len(text[0].split()) == 2:
-            result_list[idx][0] = fio[0]
-            result_list[idx][1] = fio[1]
-        elif len(text[0].split()) == 3:
-            result_list[idx][0] = fio[0]
-            result_list[idx][1] = fio[1]
-            result_list[idx][2] = fio[2]
-        elif len(text[1].split()) == 2:
-            io = text[1].split()
-            result_list[idx][1] = io[0]
-            result_list[idx][2] = io[1]
-    return result_list
+    full_name = " ".join(contacts[:3]).split()
+    full_name += [''] * (3 - len(full_name))
+    return full_name + contacts[3:]
 
 def del_duplicate(contacts):
     for contact in contacts:
@@ -59,18 +45,15 @@ def del_duplicate(contacts):
     return result_list
 
 def create_contact(contacts):
-  pattern = r'(\+7|8)*[\s\(]*(\d{3})[\)\s-]*(\d{3})[-]*(\d{2})[-]*(\d{2})[\s\(]*(доб\.)*[\s]*(\d+)*[\)]*'
-  substitution = r'+7(\2)\3-\4-\5 \6\7'
-  new_list = []
-  for item in contacts:
-      full_name = ' '.join(item[:3]).split(' ')
-      result = [full_name[0], full_name[1], full_name[2], item[3], item[4],
-                re.sub(pattern, substitution, item[5]),
-                item[6]]
-      new_list.append(result)
-  return new_list
+      pattern = r'(\+7|8)*[\s\(]*(\d{3})[\)\s-]*(\d{3})[-]*(\d{2})[-]*(\d{2})[\s\(]*(доб\.)*[\s]*(\d+)*[\)]*'
+      substitution = r'+7(\2)\3-\4-\5 \6\7'
+      result = [contacts[0], contacts[1], contacts[2], contacts[3], contacts[4],
+                re.sub(pattern, substitution, contacts[5]),
+                contacts[6]]
+      return result
 
-result = del_duplicate(group_name(create_contact(contacts_list)))
+normal_contacts = [group_name(i) for i in [create_contact(contact) for contact in contacts_list]]
+result = del_duplicate(normal_contacts)
 
 with open("phonebook.csv", "w", encoding="utf-8") as f:
     datawriter = csv.writer(f, delimiter=',')
